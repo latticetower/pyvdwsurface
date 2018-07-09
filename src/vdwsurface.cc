@@ -162,7 +162,7 @@ vector<Vec3> vdw_surface(vector<Vec3> coordinates, vector<string> elements,
 
 
 vector<Vec3> hm_surface(vector<Vec3> coordinates, vector<string> elements, 
-                        double scale_factor, int density) {
+                        double scale_factor, double density) {
                           
     if (coordinates.size() != elements.size()) {
         fprintf(stderr, "coordinate.size doesnot match elements.size");

@@ -13,12 +13,12 @@ cdef extern from "vdwsurface.h":
     vector[Vec3] vdw_surface(vector[Vec3] coordinates, vector[string] elements,
                              double scale_factor, double density)
     vector[Vec3] hm_surface(vector[Vec3] coordinates, vector[string] elements, 
-                            double scale_factor, int density)
+                            double scale_factor, double density)
                              
 
 
 def hmsurface(double[:, ::1] coordinates, elements, double scale_factor=1, 
-              int density=1):
+              double density=0.1):
     cdef int i
     cdef vector[Vec3] coordinates_
     cdef vector[Vec3] surfpoints
