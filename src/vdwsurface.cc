@@ -159,3 +159,59 @@ vector<Vec3> vdw_surface(vector<Vec3> coordinates, vector<string> elements,
 
     return surfacepoints;
 }
+
+
+vector<Vec3> hm_surface(vector<Vec3> coordinates, vector<string> elements, 
+                        double scale_factor, int density) {
+                          
+    if (coordinates.size() != elements.size()) {
+        fprintf(stderr, "coordinate.size doesnot match elements.size");
+        exit(1);
+    }
+
+    vector<Vec3> surfacepoints;
+    vector<double> radii;
+    for (size_t i = 0; i < elements.size(); i++) {
+        // todo: check for error if element not in BONDI_RADII table
+        if (BONDI_RADII.find(elements[i]) != BONDI_RADII.end()) {
+            radii.push_back(BONDI_RADII[elements[i]] * scale_factor);
+        } else {
+            fprintf(stderr, "%s is not a supported element", elements[i].c_str());
+            exit(1);
+        }
+    }
+    
+    for (size_t i = 0; i < coordinates.size(); i++) {
+        // this could be optimized -- we don't need to compute the dotsphere.
+        // at maximum we only need to compute it once per unique element / radius
+        vector<Vec3> dots = pointsphere(coordinates[i], radii[i], density);
+
+        // all of the atoms that i is close to
+        typedef std::pair<double, size_t> Neighbor;
+        vector<Neighbor> neighbors;
+        for (size_t j = 0; j < coordinates.size(); j++) {
+            if (i == j)
+                continue;
+            double d = (coordinates[i] - coordinates[j]).norm();
+            if (d < (radii[i] + radii[j])) {
+                neighbors.push_back(make_pair(d, j));
+            }
+        }
+        sort(neighbors.begin(), neighbors.end());
+
+        for (size_t k = 0; k < dots.size(); k++) {
+            int accessible = 1;
+            for (vector<Neighbor>::iterator it = neighbors.begin() ; it != neighbors.end(); ++it) {
+                if ((coordinates[(*it).second] - dots[k]).norm() < radii[(*it).second]) {
+                    accessible = 0;
+                    break;
+                }
+            }
+            if (accessible)
+                surfacepoints.push_back(dots[k]);
+        }
+    }
+
+    return surfacepoints;
+  
+}

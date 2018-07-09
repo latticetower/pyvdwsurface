@@ -7,10 +7,33 @@ cdef extern from "Vec3.h" namespace "OpenMM":
         Vec3()
         Vec3(double x, double y, double z)
         double operator[](int index) const
-
+        
+    
 cdef extern from "vdwsurface.h":
     vector[Vec3] vdw_surface(vector[Vec3] coordinates, vector[string] elements,
                              double scale_factor, double density)
+    vector[Vec3] hm_surface(vector[Vec3] coordinates, vector[string] elements, 
+                            double scale_factor, int density)
+                             
+
+
+def hmsurface(double[:, ::1] coordinates, elements, double scale_factor=1, 
+              int density=1):
+    cdef int i
+    cdef vector[Vec3] coordinates_
+    cdef vector[Vec3] surfpoints
+    for i in range(coordinates.shape[0]):
+        coordinates_.push_back(
+            Vec3(coordinates[i,0], coordinates[i,1], coordinates[i,2]))
+     
+    surfpoints = hm_surface(coordinates_, elements, scale_factor, density)
+    returnvalue = np.zeros((surfpoints.size(), 3))
+    
+    for i in range(surfpoints.size()):
+        returnvalue[i, 0] = surfpoints[i][0]
+        returnvalue[i, 1] = surfpoints[i][1]
+        returnvalue[i, 2] = surfpoints[i][2]
+    return returnvalue
 
 
 def vdwsurface(double[:, ::1] coordinates, elements, double scale_factor=1, double density=1):

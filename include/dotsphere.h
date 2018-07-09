@@ -8,4 +8,6 @@ using namespace OpenMM;
 
 vector<Vec3> dotsphere(int density);
 
+vector<Vec3> pointsphere(Vec3& coordinates, double raduis, int density);
+
 #endif
