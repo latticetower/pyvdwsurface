@@ -441,10 +441,10 @@ vector<Vec3> dotsphere(int density) {
 }
 
 void add_points_to_container(vector<Vec3>& container, double cx, double cy, double cz, 
-                 double i, double j) {
+                 double i, double j, double radius) {
     //adds points to container if there are any
-    double d = 1 - ((cx - i)*(cx - i) + (cy - j)*(cy - j));
-    if (fabs(d) < DP_TOL) { 
+    double d = radius*radius - ((cx - i)*(cx - i) + (cy - j)*(cy - j));
+    if (fabs(d) < DP_TOL*DP_TOL) { 
         //save one point and return
         container.push_back(Vec3(i, j, cz));
         return;
@@ -475,12 +475,12 @@ vector<Vec3> pointsphere(Vec3 & coordinates, double radius, double density) {
     while (i <= cx + radius) {
         double j = sy;
         while (j <= cy + radius) {
-            add_points_to_container(vertices, cx, cy, cz, i, j);
+            add_points_to_container(vertices, cx, cy, cz, i, j, radius);
             j += density;
         }
         j = sy - density;
         while (j >= cy - radius) {
-            add_points_to_container(vertices, cx, cy, cz, i, j);
+            add_points_to_container(vertices, cx, cy, cz, i, j, radius);
             j -= density;
         }
         i += density;
@@ -489,12 +489,12 @@ vector<Vec3> pointsphere(Vec3 & coordinates, double radius, double density) {
     while (i >= cx - radius) {
         double j = sy;
         while (j <= cy + radius) {
-            add_points_to_container(vertices, cx, cy, cz, i, j);
+            add_points_to_container(vertices, cx, cy, cz, i, j, radius);
             j += density;
         }
         j = sy - density;
         while (j >= cy - radius) {
-            add_points_to_container(vertices, cx, cy, cz, i, j);
+            add_points_to_container(vertices, cx, cy, cz, i, j, radius);
             j -= density;
         }
         i -= density;
