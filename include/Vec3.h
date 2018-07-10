@@ -157,6 +157,10 @@ public:
         return sqrt(this->dot(*this));
     }
     
+    double norm_squared() const {
+        return this->dot(*this);
+    }
+    
 private:
     double data[3];
 };

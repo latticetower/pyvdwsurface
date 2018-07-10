@@ -13,20 +13,28 @@ cdef extern from "vdwsurface.h":
     vector[Vec3] vdw_surface(vector[Vec3] coordinates, vector[string] elements,
                              double scale_factor, double density)
     vector[Vec3] hm_surface(vector[Vec3] coordinates, vector[string] elements, 
+                            vector[Vec3] ligand_coordinates,
                             double scale_factor, double density)
                              
 
 
-def hmsurface(double[:, ::1] coordinates, elements, double scale_factor=1, 
+def hmsurface(double[:, ::1] coordinates, elements, 
+              double[:, ::1] ligand_coordinates,
+              double scale_factor=1, 
               double density=0.1):
     cdef int i
     cdef vector[Vec3] coordinates_
+    cdef vector[Vec3] ligand_coordinates_
     cdef vector[Vec3] surfpoints
     for i in range(coordinates.shape[0]):
         coordinates_.push_back(
             Vec3(coordinates[i,0], coordinates[i,1], coordinates[i,2]))
+    for i in range(ligand_coordinates.shape[0]):
+        ligand_coordinates_.push_back(
+            Vec3(ligand_coordinates[i, 0], ligand_coordinates[i, 1], ligand_coordinates[i, 2]))
      
-    surfpoints = hm_surface(coordinates_, elements, scale_factor, density)
+    surfpoints = hm_surface(coordinates_, elements, ligand_coordinates_, 
+        scale_factor, density)
     returnvalue = np.zeros((surfpoints.size(), 3))
     
     for i in range(surfpoints.size()):

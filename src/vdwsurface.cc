@@ -162,6 +162,7 @@ vector<Vec3> vdw_surface(vector<Vec3> coordinates, vector<string> elements,
 
 
 vector<Vec3> hm_surface(vector<Vec3> coordinates, vector<string> elements, 
+                        vector<Vec3> ligand_coordinates,
                         double scale_factor, double density) {
                           
     if (coordinates.size() != elements.size()) {
@@ -203,6 +204,14 @@ vector<Vec3> hm_surface(vector<Vec3> coordinates, vector<string> elements,
             int accessible = 1;
             for (vector<Neighbor>::iterator it = neighbors.begin() ; it != neighbors.end(); ++it) {
                 if ((coordinates[(*it).second] - dots[k]).norm() < radii[(*it).second]) {
+                    accessible = 0;
+                    break;
+                }
+            }
+            for (vector<Vec3>::iterator it = ligand_coordinates.begin(); it!= ligand_coordinates.end(); ++it) {
+                double dist_dot_squared = ((*it) - dots[k]).norm_squared();
+                double dist_normal_surface_squared = ((*it) - coordinates[i]).norm_squared() + radii[i]*radii[i];
+                if (dist_dot_squared > dist_normal_surface_squared) {
                     accessible = 0;
                     break;
                 }
