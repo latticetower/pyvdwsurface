@@ -208,15 +208,16 @@ vector<Vec3> hm_surface(vector<Vec3> coordinates, vector<string> elements,
                     break;
                 }
             }
+            bool visible = false;
             for (vector<Vec3>::iterator it = ligand_coordinates.begin(); it!= ligand_coordinates.end(); ++it) {
                 double dist_dot_squared = ((*it) - dots[k]).norm_squared();
                 double dist_normal_surface_squared = ((*it) - coordinates[i]).norm_squared() + radii[i]*radii[i];
-                if (dist_dot_squared > dist_normal_surface_squared) {
-                    accessible = 0;
+                if (dist_dot_squared <= dist_normal_surface_squared) {
+                    visible = true;
                     break;
                 }
             }
-            if (accessible)
+            if (accessible && visible)
                 surfacepoints.push_back(dots[k]);
         }
     }
